@@ -24,7 +24,7 @@ This repository gathers practical tools, automation scripts, and configuration e
 Clone the repository and explore the categorized folders:
 
 ```bash
-git clone https://github.com/your-username/infra-ai-essentials.git
+git clone https://github.com/speglichj/infra-ai-essentials.git
 cd infra-ai-essentials/
 ```
 
@@ -44,4 +44,4 @@ Contributions are welcome! If you're also working with AI infrastructure and wan
 
 **João Henrique Speglich**
 AI Cloud Solution Engineer
-GitHub: [github.com/your-username](https://github.com/speglich)
+GitHub: [github.com/speglichj](https://github.com/speglichj)
