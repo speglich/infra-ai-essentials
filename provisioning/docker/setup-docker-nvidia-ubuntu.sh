@@ -84,7 +84,11 @@ sudo docker run --rm --runtime=nvidia --gpus all ubuntu nvidia-smi
 
 # Add docker group to the current user
 echo "Adding current user to docker group..."
+
+echo "User $USER is being added to the docker group..."
+sudo groupadd docker
 sudo usermod -aG docker $USER
+
 if [ $? -ne 0 ]; then
     echo "Failed to add user to docker group. Exiting."
     exit 1
