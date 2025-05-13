@@ -43,5 +43,7 @@ Contributions are welcome! If you're also working with AI infrastructure and wan
 ## Author
 
 **João Henrique Speglich**
+
 AI Cloud Solution Engineer
+
 GitHub: [github.com/speglich](https://github.com/speglich)
