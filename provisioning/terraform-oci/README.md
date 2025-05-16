@@ -1,4 +1,4 @@
-# Terraform OCI VCN with Public and Private Subnets
+# Example of Terraform in OCI
 
 This project uses Terraform to provision a Virtual Cloud Network (VCN) on Oracle Cloud Infrastructure (OCI), including:
 
@@ -22,10 +22,12 @@ This project uses Terraform to provision a Virtual Cloud Network (VCN) on Oracle
 │ ├── main.tf
 │ ├── variables.tf
 │ └── outputs.tf
+| └── provider.tf
 └── compute
 ├── main.tf
 ├── variables.tf
 └── outputs.tf
+└── provider.tf
 ```
 
 ## Prerequisites
@@ -43,6 +45,7 @@ You must define the required variables in `terraform.tfvars`:
 region = "sa-saopaulo-1"
 compartment_ocid = "ocid1.compartment.oc1..xxxxxxxx"
 ssh_public_key = "ssh-rsa AAAA... your_user@host"
+profile = "DEFAULT" # OCI CLI profile
 ```
 
 ## Usage
