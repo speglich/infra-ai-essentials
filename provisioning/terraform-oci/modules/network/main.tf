@@ -1,7 +1,7 @@
 resource "oci_core_virtual_network" "vcn" {
   cidr_block     = var.vcn_cidr
   compartment_id = var.compartment_ocid
-  display_name   = "vcn-devops"
+  display_name   = "${var.network_name}-vcn"
 }
 
 resource "oci_core_internet_gateway" "igw" {
