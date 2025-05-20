@@ -18,16 +18,20 @@ This project uses Terraform to provision a Virtual Cloud Network (VCN) on Oracle
 ├── provider.tf
 ├── terraform.tfvars
 └── modules
-├── network
-│ ├── main.tf
-│ ├── variables.tf
-│ └── outputs.tf
-| └── provider.tf
-└── compute
-├── main.tf
-├── variables.tf
-└── outputs.tf
-└── provider.tf
+    ├── network
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   ├── outputs.tf
+    │   └── provider.tf
+    ├── compute
+    │   ├── main.tf
+    │   ├── variables.tf
+    │   ├── outputs.tf
+    │   └── provider.tf
+    └── tools
+        ├── main.tf
+        ├── variables.tf
+        └── provider.tf
 ```
 
 ## Prerequisites
@@ -45,6 +49,7 @@ You must define the required variables in `terraform.tfvars`:
 region = "sa-saopaulo-1"
 compartment_ocid = "ocid1.compartment.oc1..xxxxxxxx"
 ssh_public_key = "ssh-rsa AAAA... your_user@host"
+ssh_private_key_path = "/path/to/your/private_key.pem"
 profile = "DEFAULT" # OCI CLI profile
 ```
 
