@@ -1,25 +1,35 @@
-data "oci_core_images" "ubuntu_latest" {
-  compartment_id = var.compartment_ocid
-  operating_system = "Canonical Ubuntu"
-  operating_system_version = "22.04"
-  shape = "VM.Standard.E5.Flex"
-  sort_by = "TIMECREATED"
-  sort_order = "DESC"
+# This module creates a public compute instance in OCI with the specified shape and configuration.
+# It uses a dynamic block to configure the shape and memory for flex shapes.
+# The instance is created in the specified compartment and availability domain.
+# The instance is assigned a public IP address and uses the provided SSH public key for access.
+
+locals {
+  flex_shapes = [
+    "VM.Standard.E5.Flex",
+    "VM.Standard.E4.Flex",
+  ]
+
+  is_flex = contains(local.flex_shapes, var.shape)
 }
 
 resource "oci_core_instance" "public" {
   compartment_id = var.compartment_ocid
   availability_domain = var.availability_domain
-  shape = "VM.Standard.E5.Flex"
+  shape = var.shape
+  display_name = "${var.instance_name}-public"
 
-  shape_config {
-    ocpus = 1
-    memory_in_gbs = 8
+  # Use flex shapes for OCPUs and memory
+  dynamic "shape_config" {
+    for_each = local.is_flex ? [1] : []
+    content {
+      ocpus         = var.ocpus
+      memory_in_gbs = var.memory_in_gbs
+    }
   }
 
   source_details {
     source_type = "image"
-    source_id = data.oci_core_images.ubuntu_latest.images[0].id
+    source_id = var.image_id
   }
 
   create_vnic_details {
@@ -30,33 +40,4 @@ resource "oci_core_instance" "public" {
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
   }
-
-  display_name = "e5-public"
-}
-
-resource "oci_core_instance" "private" {
-  compartment_id = var.compartment_ocid
-  availability_domain = var.availability_domain
-  shape = "VM.Standard.E5.Flex"
-
-  shape_config {
-    ocpus = 1
-    memory_in_gbs = 8
-  }
-
-  source_details {
-    source_type = "image"
-    source_id = data.oci_core_images.ubuntu_latest.images[0].id
-  }
-
-  create_vnic_details {
-    subnet_id        = var.private_subnet_id
-    assign_public_ip = false
-  }
-
-  metadata = {
-    ssh_authorized_keys = var.ssh_public_key
-  }
-
-  display_name = "e5-private"
 }
