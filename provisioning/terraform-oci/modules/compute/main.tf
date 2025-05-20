@@ -30,6 +30,7 @@ resource "oci_core_instance" "public" {
   source_details {
     source_type = "image"
     source_id = var.image_id
+    boot_volume_size_in_gbs = var.boot_volume_size_in_gbs
   }
 
   create_vnic_details {
@@ -39,5 +40,21 @@ resource "oci_core_instance" "public" {
 
   metadata = {
     ssh_authorized_keys = var.ssh_public_key
+  }
+
+  provisioner "remote-exec" {
+
+    inline = [
+      "sudo /usr/libexec/oci-growfs -y"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = var.ssh_user
+      private_key = file(var.ssh_private_key)
+      host        = self.public_ip
+      timeout     = "5m"
+    }
+
   }
 }

@@ -45,3 +45,22 @@ resource "null_resource" "nvidia_container_toolkit_install" {
     }
   }
 }
+
+resource "null_resource" "llama_container" {
+  depends_on = [ null_resource.nvidia_container_toolkit_install ]
+  count = var.setup_llama ? 1 : 0
+
+  provisioner "remote-exec" {
+    inline = [
+      "docker run --runtime nvidia --gpus all --name my_llama_container -v ~/.cache/huggingface:/root/.cache/huggingface --env \"HUGGING_FACE_HUB_TOKEN=${var.hugging_face_token}\" -p 8000:8000  --ipc=host -d vllm/vllm-openai:latest --model meta-llama/Llama-3.1-8B-Instruct"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = var.ssh_user
+      private_key = file(var.ssh_private_key)
+      host        = var.instance_public_ip
+      timeout     = "5m"
+    }
+  }
+}

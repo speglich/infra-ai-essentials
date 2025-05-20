@@ -21,3 +21,12 @@ variable "ssh_private_key" {
     description = "SSH private key for accessing the instance"
     type        = string
 }
+variable "hugging_face_token" {
+    description = "Hugging Face token for accessing models"
+    type        = string
+}
+variable "setup_llama" {
+    description = "Whether to set up Llama on the instance"
+    default     = true
+    type        = bool
+}

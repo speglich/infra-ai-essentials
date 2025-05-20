@@ -14,8 +14,11 @@ module "compute" {
   public_subnet_id    = module.network.public_subnet_id
   private_subnet_id   = module.network.private_subnet_id
   ssh_public_key      = var.ssh_public_key
+  ssh_private_key     = var.ssh_private_key
+  ssh_user            = var.ssh_user
   shape               = var.shape
   image_id            = var.image_id
+  boot_volume_size_in_gbs = var.boot_volume_size_in_gbs
   instance_name       = local.environment_name
 }
 
@@ -26,6 +29,8 @@ module "tools" {
   ssh_private_key     = var.ssh_private_key
   setup_docker        = var.setup_docker
   setup_nvidia_container_toolkit = var.setup_nvidia_container_toolkit
+  setup_llama         = var.setup_llama
+  hugging_face_token  = var.hugging_face_token
 }
 
 data "oci_identity_availability_domains" "ads" {

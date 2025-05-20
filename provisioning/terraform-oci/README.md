@@ -1,12 +1,11 @@
-# Example of Terraform in OCI
+# LLM Deployment with Terraform on OCI
 
-This project uses Terraform to provision a Virtual Cloud Network (VCN) on Oracle Cloud Infrastructure (OCI), including:
+This project uses Terraform to provision infrastructure on Oracle Cloud Infrastructure (OCI) with:
 
-* A public subnet with an accessible E5 instance (via SSH)
-* A private subnet with an E5 instance (no public IP)
+* A public subnet with an accessible VM.A10.1 instance (via SSH)
 * An Internet Gateway for public internet access
-* A NAT Gateway to allow the private subnet to access the internet
-* A modular architecture using separate network and compute modules
+* Automated installation of Docker and NVIDIA Container Toolkit
+* Deployment of the Meta Llama 3.1-8B-Instruct model using vLLM, exposed on port 8000 (accessible inside the VCN)
 
 ## Project Structure
 
@@ -51,6 +50,7 @@ compartment_ocid = "ocid1.compartment.oc1..xxxxxxxx"
 ssh_public_key = "ssh-rsa AAAA... your_user@host"
 ssh_private_key_path = "/path/to/your/private_key.pem"
 profile = "DEFAULT" # OCI CLI profile
+hugging_face_token = "your_hugging_face_token"
 ```
 
 ## Usage
@@ -79,9 +79,4 @@ profile = "DEFAULT" # OCI CLI profile
 
 modules/network: Defines the VCN, subnets, routing tables, and gateways
 modules/compute: Launches E5 instances in public and private subnets
-
-## Notes
-
-The private instance has no public IP; access must be made via a jump host (the public instance)
-Be sure to use secure key management and follow OCI IAM best practices
-Confirm the compartment_id and region match your tenancy configuration
+modules/tools: Installs Docker, NVIDIA Container Toolkit, and vLLM on the public instance

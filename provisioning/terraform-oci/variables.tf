@@ -37,6 +37,12 @@ variable "image_id" {
   type        = string
 }
 
+variable "boot_volume_size_in_gbs" {
+  description = "Size of the boot volume in GBs"
+  default     = 100
+  type        = number
+}
+
 variable "ssh_user" {
   description = "Default SSH user for accessing the instance"
   default     = "opc"
@@ -53,4 +59,15 @@ variable "setup_nvidia_container_toolkit" {
   description = "Whether to set up NVIDIA toolkit on the instance"
   default     = true
   type        = bool
+}
+
+variable "setup_llama" {
+  description = "Whether to set up Llama on the instance"
+  default     = true
+  type        = bool
+}
+
+variable "hugging_face_token" {
+  description = "Hugging Face token for accessing models"
+  type        = string
 }

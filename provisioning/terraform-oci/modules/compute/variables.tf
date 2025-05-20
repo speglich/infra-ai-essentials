@@ -10,6 +10,15 @@ variable "ssh_public_key" {
     description = "SSH public key for accessing the instance"
     type        = string
 }
+variable "ssh_private_key" {
+    description = "SSH private key for accessing the instance"
+    type        = string
+}
+variable "ssh_user" {
+    description = "Default SSH user for accessing the instance"
+    default     = "ubuntu"
+    type        = string
+}
 variable "public_subnet_id" {
     description = "OCID of the public subnet"
     type        = string
@@ -42,6 +51,12 @@ variable "image_id" {
     # You can find the latest image OCID in the OCI console or use the CLI to list images
     default = "ocid1.image.oc1.sa-saopaulo-1.aaaaaaaa7z4j4tf57j54mfx3g32xdk2v2ayhtp5xp3js7s6nx6kagxdkka7a"
     type        = string
+}
+
+variable "boot_volume_size_in_gbs" {
+    description = "Size of the boot volume in GBs"
+    default     = 50
+    type        = number
 }
 
 variable "instance_name" {
