@@ -6,3 +6,8 @@ variable "network_name" {
   description = "Name of the network"
   type        = string
 }
+variable "exposed_ports" {
+  description = "List of ports to expose"
+  type        = list(number)
+  default     = [22, 8000]
+}

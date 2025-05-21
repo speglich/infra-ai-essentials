@@ -46,6 +46,25 @@ resource "null_resource" "nvidia_container_toolkit_install" {
   }
 }
 
+resource null_resource "set_firewall_rules" {
+  count = var.setup_llama ? 1 : 0
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo firewall-cmd --permanent --add-port=8000/tcp",
+      "sudo firewall-cmd --reload"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = var.ssh_user
+      private_key = file(var.ssh_private_key)
+      host        = var.instance_public_ip
+      timeout     = "5m"
+    }
+  }
+}
+
 resource "null_resource" "llama_container" {
   depends_on = [ null_resource.nvidia_container_toolkit_install ]
   count = var.setup_llama ? 1 : 0
