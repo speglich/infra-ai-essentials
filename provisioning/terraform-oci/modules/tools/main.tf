@@ -52,7 +52,7 @@ resource "null_resource" "llama_container" {
 
   provisioner "remote-exec" {
     inline = [
-      "docker run --runtime nvidia --gpus all --name my_llama_container -v ~/.cache/huggingface:/root/.cache/huggingface --env \"HUGGING_FACE_HUB_TOKEN=${var.hugging_face_token}\" -p 8000:8000  --ipc=host -d vllm/vllm-openai:latest --model meta-llama/Llama-3.1-8B-Instruct"
+      "docker run --runtime nvidia --gpus all --name my_llama_container -v ~/.cache/huggingface:/root/.cache/huggingface --env \"HUGGING_FACE_HUB_TOKEN=${var.hugging_face_token}\" -p 8000:8000  --ipc=host -d vllm/vllm-openai:latest --model meta-llama/Llama-3.1-8B-Instruct --max_model_len 2000"
     ]
 
     connection {
