@@ -5,6 +5,7 @@ module "network" {
   public_subnet_cidr = "10.0.1.0/24"
   private_subnet_cidr = "10.0.2.0/24"
   network_name      = local.environment_name
+  exposed_ports = var.exposed_ports
 }
 
 module "compute" {
@@ -29,7 +30,9 @@ module "tools" {
   ssh_private_key     = var.ssh_private_key
   setup_docker        = var.setup_docker
   setup_nvidia_container_toolkit = var.setup_nvidia_container_toolkit
-  setup_llama         = var.setup_llama
+  setup_vllm         = var.setup_vllm
+  vllm_model         = var.vllm_model
+  vllm_parameters    = var.vllm_parameters
   hugging_face_token  = var.hugging_face_token
 }
 

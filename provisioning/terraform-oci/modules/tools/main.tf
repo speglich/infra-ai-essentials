@@ -47,7 +47,7 @@ resource "null_resource" "nvidia_container_toolkit_install" {
 }
 
 resource null_resource "set_firewall_rules" {
-  count = var.setup_llama ? 1 : 0
+  count = var.setup_vllm ? 1 : 0
 
   provisioner "remote-exec" {
     inline = [
@@ -65,13 +65,13 @@ resource null_resource "set_firewall_rules" {
   }
 }
 
-resource "null_resource" "llama_container" {
+resource "null_resource" "vllm_container" {
   depends_on = [ null_resource.nvidia_container_toolkit_install ]
-  count = var.setup_llama ? 1 : 0
+  count = var.setup_vllm ? 1 : 0
 
   provisioner "remote-exec" {
     inline = [
-      "docker run --runtime nvidia --gpus all --name my_llama_container -v ~/.cache/huggingface:/root/.cache/huggingface --env \"HUGGING_FACE_HUB_TOKEN=${var.hugging_face_token}\" -p 8000:8000  --ipc=host -d vllm/vllm-openai:latest --model meta-llama/Llama-3.1-8B-Instruct --max_model_len 2000"
+      "docker run --runtime nvidia --gpus all -v ~/.cache/huggingface:/root/.cache/huggingface --env \"HUGGING_FACE_HUB_TOKEN=${var.hugging_face_token}\" -p 8000:8000  --ipc=host -d vllm/vllm-openai:latest --model ${var.vllm_model} ${var.vllm_parameters} --port 8000"
     ]
 
     connection {
@@ -81,5 +81,20 @@ resource "null_resource" "llama_container" {
       host        = var.instance_public_ip
       timeout     = "5m"
     }
+  }
+}
+
+resource "null_resource" "wait_for_vllm" {
+  depends_on = [ null_resource.vllm_container ]
+
+  provisioner "local-exec" {
+    command = <<EOT
+      echo "Esperando o vLLM responder em /health..."
+      until curl --silent --fail --max-time 2 http://${var.instance_public_ip}:8000/health; do
+        echo "Aguardando endpoint /health..."
+        sleep 5
+      done
+      echo "vLLM está disponível!"
+    EOT
   }
 }

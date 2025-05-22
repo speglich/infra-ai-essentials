@@ -49,6 +49,12 @@ variable "ssh_user" {
   type        = string
 }
 
+variable "exposed_ports" {
+  description = "List of ports to expose on the instance"
+  type        = list(number)
+  default     = [22, 8000]
+}
+
 variable "setup_docker" {
   description = "Whether to set up Docker on the instance"
   default     = true
@@ -61,13 +67,26 @@ variable "setup_nvidia_container_toolkit" {
   type        = bool
 }
 
-variable "setup_llama" {
-  description = "Whether to set up Llama on the instance"
-  default     = true
-  type        = bool
-}
 
 variable "hugging_face_token" {
   description = "Hugging Face token for accessing models"
   type        = string
+}
+
+variable "setup_vllm" {
+  description = "Whether to set up VLLM on the instance"
+  default     = true
+  type        = bool
+}
+
+variable "vllm_model" {
+  description = "Model to be used with vLLM"
+  default     = "meta-llama/Llama-3.1-8B-Instruct"
+  type        = string
+}
+
+variable "vllm_parameters" {
+  description = "Additional parameters for vLLM"
+  type        = string
+  default     = "--max_model_len 2000"
 }
