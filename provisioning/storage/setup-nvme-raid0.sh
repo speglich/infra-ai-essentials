@@ -47,3 +47,6 @@ sudo mdadm --detail --scan | sudo tee -a /etc/mdadm/mdadm.conf >/dev/null 2>&1 |
 sudo mdadm --detail --scan | sudo tee -a /etc/mdadm.conf >/dev/null
 
 echo "RAID 0 configurado com sucesso em $RAID_DEVICE e montado em $MOUNT_POINT"
+
+echo "Ajustando permissões para leitura e escrita para todos os usuários..."
+sudo chmod 777 $MOUNT_POINT
