@@ -87,7 +87,7 @@ echo "Adding current user to docker group..."
 
 echo "User $USER is being added to the docker group..."
 sudo groupadd docker
-sudo usermod -aG docker opc
+sudo usermod -aG docker ubuntu
 
 if [ $? -ne 0 ]; then
     echo "Failed to add user to docker group. Exiting."
