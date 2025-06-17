@@ -24,7 +24,7 @@ This repository gathers practical tools, automation scripts, and configuration e
 Clone the repository and explore the categorized folders:
 
 ```bash
-git clone https://github.com/speglichj/infra-ai-essentials.git
+git clone https://github.com/speglich/infra-ai-essentials.git
 cd infra-ai-essentials/
 ```
 
