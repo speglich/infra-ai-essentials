@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-gptoss
+  namespace: gptoss
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app: vllm-gptoss
+  template:
+    metadata:
+      labels:
+        app: vllm-gptoss
+    spec:
+      containers:
+        - name: vllm-gptoss
+          image: vllm/vllm-openai:gptoss
+          args:
+            - "--model"
+            - "openai/gpt-oss-20b"
+            - "--async-scheduling"
+          ports:
+          - containerPort: 8000
+          env:
+          - name: HUGGING_FACE_HUB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: hf-token
+                key: HF_TOKEN
+          - name: VLLM_ATTENTION_BACKEND
+            value: "TRITON_ATTN_VLLM_V1"
+          resources:
+            requests:
+              nvidia.com/gpu: 1
+            limits:
+              nvidia.com/gpu: 1
