@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scout
+  namespace: vllm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scout
+  template:
+    metadata:
+      labels:
+        app: scout
+    spec:
+      initContainers:
+        - name: preload-model
+          image: python:3.9-slim
+          env:
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: hf-token
+                  key: HF_TOKEN
+            - name: HF_HOME
+              value: /mnt/scratch/cache
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -euo pipefail
+              pip install --no-cache-dir -U "huggingface_hub[cli]"
+              huggingface-cli download meta-llama/Llama-4-Scout-17B-16E
+          volumeMounts:
+            - mountPath: /mnt/scratch/cache
+              name: huggingface-cache
+      containers:
+        - name: scout
+          image: vllm/vllm-openai:latest
+          args:
+            - "--model"
+            - "meta-llama/Llama-4-Scout-17B-16E"
+            - "--tensor_parallel_size=8"
+          ports:
+          - containerPort: 8000
+          env:
+          - name: HUGGING_FACE_HUB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: hf-token
+                key: HF_TOKEN
+          - name: HF_HOME
+            value: /mnt/scratch/cache
+          resources:
+            requests:
+              nvidia.com/gpu: 8
+            limits:
+              nvidia.com/gpu: 8
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: cache-volume
+            - mountPath: /mnt/scratch/cache
+              name: huggingface-cache
+      volumes:
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 8192Mi
+        name: cache-volume
+      - hostPath:
+          path: /mnt/scratch/cache
+          type: DirectoryOrCreate
+        name: huggingface-cache
