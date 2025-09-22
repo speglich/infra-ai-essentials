@@ -1,6 +1,6 @@
-# Llama-3.3-70B-Instruct Deployment
+# Llama-4-Maverick-17B-128E-Instruct-FP8 Deployment
 
-This directory contains Kubernetes resources for deploying the **Llama-3.3-70B-Instruct** model using vLLM.
+This directory contains Kubernetes resources for deploying the **Llama-4-Maverick-17B-128E-Instruct-FP8** model using vLLM.
 
 ## 🚀 Recommended Configuration
 
@@ -59,7 +59,7 @@ The service is exposed via **NodePort 32328**:
 curl -X POST "http://<node-ip>:32328/v1/chat/completions" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "meta-llama/Llama-3.3-70B-Instruct",
+    "model": "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8",
     "messages": [{"role": "user", "content": "Hello!"}],
     "max_tokens": 100
   }'
@@ -74,7 +74,7 @@ curl -X POST "http://<node-ip>:32328/v1/chat/completions" \
 
 ### vLLM Configuration
 - **Tensor Parallelism**: 8 GPUs
-- **Model**: meta-llama/Llama-3.3-70B-Instruct
+- **Model**: meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8
 - **API**: OpenAI Compatible
 
 ## 📊 Performance
@@ -95,17 +95,17 @@ curl -X POST "http://<node-ip>:32328/v1/chat/completions" \
 
 ### Check pod status
 ```bash
-kubectl describe pod -l app=llama -n vllm
+kubectl describe pod -l app=maverick -n vllm
 ```
 
 ### Container logs
 ```bash
-kubectl logs -f deployment/llama -n vllm -c llama
+kubectl logs -f deployment/maverick -n vllm -c maverick
 ```
 
 ### Init container logs
 ```bash
-kubectl logs deployment/llama -n vllm -c preload-model
+kubectl logs deployment/maverick -n vllm -c preload-model
 ```
 
 ### Check GPU resources

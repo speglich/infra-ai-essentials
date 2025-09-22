@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maverick
+  namespace: vllm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: maverick
+  template:
+    metadata:
+      labels:
+        app: maverick
+    spec:
+      initContainers:
+        - name: preload-model
+          image: python:3.9-slim
+          env:
+            - name: HF_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: hf-token
+                  key: HF_TOKEN
+            - name: HF_HOME
+              value: /mnt/scratch/cache
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -euo pipefail
+              pip install --no-cache-dir -U "huggingface_hub[cli]"
+              huggingface-cli download meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8
+
+          volumeMounts:
+            - mountPath: /mnt/scratch/cache
+              name: huggingface-cache
+      containers:
+        - name: maverick
+          image: vllm/vllm-openai:latest
+          args:
+            - "--model"
+            - "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8"
+            - "--tensor_parallel_size=8"
+          ports:
+          - containerPort: 8000
+          env:
+          - name: HUGGING_FACE_HUB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: hf-token
+                key: HF_TOKEN
+          - name: HF_HOME
+            value: /mnt/scratch/cache
+          resources:
+            requests:
+              nvidia.com/gpu: 8
+            limits:
+              nvidia.com/gpu: 8
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: cache-volume
+            - mountPath: /mnt/scratch/cache
+              name: huggingface-cache
+      volumes:
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 8192Mi
+        name: cache-volume
+      - hostPath:
+          path: /mnt/scratch/cache
+          type: DirectoryOrCreate
+        name: huggingface-cache
