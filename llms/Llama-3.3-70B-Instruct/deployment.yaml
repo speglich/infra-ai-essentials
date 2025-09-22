@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llama
+  namespace: vllm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llama
+  template:
+    metadata:
+      labels:
+        app: llama
+    spec:
+      containers:
+        - name: llama
+          image: vllm/vllm-openai:v0.6.4.post1
+          args:
+            - "--model"
+            - "meta-llama/Llama-3.3-70B-Instruct"
+            - "--tensor_parallel_size=4"
+          ports:
+          - containerPort: 8000
+          env:
+          - name: HUGGING_FACE_HUB_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: hf-token
+                key: HF_TOKEN
+          resources:
+            requests:
+              nvidia.com/gpu: 4
+            limits:
+              nvidia.com/gpu: 4
+          volumeMounts:
+            - mountPath: /dev/shm
+              name: cache-volume
+      volumes:
+      - emptyDir:
+          medium: Memory
+          sizeLimit: 8192Mi
+        name: cache-volume
